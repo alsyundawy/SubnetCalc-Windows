@@ -10,11 +10,27 @@ cd "${REPO_ROOT}"
 mkdir -p build dist
 
 if [ "${MODE}" = "test" ]; then
-    echo "==> Running host unit tests..."
+    echo "==> Running host unit test suites..."
     HOST_CC="${CC:-gcc}"
-    ${HOST_CC} -std=c11 -Wall -Wextra -Werror -pedantic         -I src -I src/engine         tests/test_engine.c -o build/test_engine
-    ./build/test_engine
-    echo "==> All host tests passed successfully."
+    CFLAGS="-std=c11 -Wall -Wextra -Wpedantic -Werror -I src -I src/engine"
+
+    echo "--> Running test_ipv4..."
+    ${HOST_CC} ${CFLAGS} src/engine/ipv4.c src/engine/classify.c tests/test_ipv4.c -o build/test_ipv4
+    ./build/test_ipv4
+
+    echo "--> Running test_ipv6..."
+    ${HOST_CC} ${CFLAGS} src/engine/ipv4.c src/engine/ipv6.c src/engine/biguint.c src/engine/classify.c src/engine/ula.c tests/test_ipv6.c -o build/test_ipv6
+    ./build/test_ipv6
+
+    echo "--> Running test_cloud..."
+    ${HOST_CC} ${CFLAGS} src/engine/ipv4.c src/engine/cloud.c src/engine/split.c src/engine/cidr.c tests/test_cloud.c -o build/test_cloud
+    ./build/test_cloud
+
+    echo "--> Running test_export..."
+    ${HOST_CC} ${CFLAGS} src/engine/export.c tests/test_export.c -o build/test_export
+    ./build/test_export
+
+    echo "==> All host test suites passed successfully."
 
 elif [ "${MODE}" = "release" ]; then
     echo "==> Building release binaries for x86 and x64..."
@@ -22,6 +38,10 @@ elif [ "${MODE}" = "release" ]; then
 
     COMMON_CFLAGS="-std=c11 -O2 -Wall -Wextra -Wpedantic -DWINVER=0x0601 -D_WIN32_WINNT=0x0601 -DUNICODE -D_UNICODE -municode -mwindows -static -static-libgcc"
     COMMON_LDFLAGS="-lcomctl32 -luser32 -lgdi32 -lkernel32 -lcomdlg32 -lshell32 -ladvapi32 -lbcrypt"
+
+    # Engine sources
+    ENGINE_SRCS="src/engine/ipv4.c src/engine/ipv6.c src/engine/biguint.c src/engine/classify.c src/engine/cloud.c src/engine/split.c src/engine/cidr.c src/engine/export.c src/engine/ula.c"
+    UI_SRCS="src/ui/window.c src/ui/tabs.c src/ui/tab_ipv4.c src/ui/tab_hosts.c src/ui/tab_cidr.c src/ui/tab_flsm.c src/ui/tab_vlsm.c src/ui/tab_ipv6.c src/ui/about.c src/ui/theme.c src/ui/clipboard.c src/persist/history.c"
 
     # Compile Windows resource if windres exists
     if command -v i686-w64-mingw32-windres >/dev/null 2>&1 && [ -f "res/app.rc" ]; then
@@ -39,7 +59,14 @@ elif [ "${MODE}" = "release" ]; then
     # Cross-compile x86
     if command -v i686-w64-mingw32-gcc >/dev/null 2>&1; then
         echo "--> Compiling SubnetCalc-x86.exe..."
-        i686-w64-mingw32-gcc ${COMMON_CFLAGS}             -I src src/main.c ${RES_X86}             -o dist/SubnetCalc-x86.exe ${COMMON_LDFLAGS}
+        ALL_SRCS="src/main.c ${ENGINE_SRCS}"
+        for s in ${UI_SRCS}; do
+            [ -f "${s}" ] && ALL_SRCS="${ALL_SRCS} ${s}"
+        done
+        i686-w64-mingw32-gcc ${COMMON_CFLAGS} \
+            -I src -I src/engine -I src/ui -I src/persist \
+            ${ALL_SRCS} ${RES_X86} \
+            -o dist/SubnetCalc-x86.exe ${COMMON_LDFLAGS}
         
         # Package portable ZIP
         echo "--> Packaging SubnetCalc-Windows-x86.zip..."
@@ -51,7 +78,14 @@ elif [ "${MODE}" = "release" ]; then
     # Cross-compile x64
     if command -v x86_64-w64-mingw32-gcc >/dev/null 2>&1; then
         echo "--> Compiling SubnetCalc-x64.exe..."
-        x86_64-w64-mingw32-gcc ${COMMON_CFLAGS}             -I src src/main.c ${RES_X64}             -o dist/SubnetCalc-x64.exe ${COMMON_LDFLAGS}
+        ALL_SRCS="src/main.c ${ENGINE_SRCS}"
+        for s in ${UI_SRCS}; do
+            [ -f "${s}" ] && ALL_SRCS="${ALL_SRCS} ${s}"
+        done
+        x86_64-w64-mingw32-gcc ${COMMON_CFLAGS} \
+            -I src -I src/engine -I src/ui -I src/persist \
+            ${ALL_SRCS} ${RES_X64} \
+            -o dist/SubnetCalc-x64.exe ${COMMON_LDFLAGS}
         
         # Package portable ZIP
         echo "--> Packaging SubnetCalc-Windows-x64.zip..."
