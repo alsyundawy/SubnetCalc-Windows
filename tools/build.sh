@@ -18,6 +18,7 @@ if [ "${MODE}" = "test" ]; then
 
 elif [ "${MODE}" = "release" ]; then
     echo "==> Building release binaries for x86 and x64..."
+    cp -f WIN7.txt dist/WIN7.txt
 
     COMMON_CFLAGS="-std=c11 -O2 -Wall -Wextra -Wpedantic -DWINVER=0x0601 -D_WIN32_WINNT=0x0601 -DUNICODE -D_UNICODE -municode -mwindows -static -static-libgcc"
     COMMON_LDFLAGS="-lcomctl32 -luser32 -lgdi32 -lkernel32 -lcomdlg32 -lshell32 -ladvapi32 -lbcrypt"

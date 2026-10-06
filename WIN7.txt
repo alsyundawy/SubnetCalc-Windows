@@ -1,0 +1,5 @@
+SubnetCalc-Windows portable build and NSIS installer.
+Portable ZIP runs on Windows 7 SP1 x86 and x64 with no admin and no redistributable.
+The setup EXE installs to Program Files and needs administrator. It bundles only the portable EXE, LICENSE, and this file.
+No .NET and no Visual C++ Redistributable.
+Unsigned. SmartScreen may warn on the portable EXE and on the setup EXE. Check SHA256SUMS before running.
