@@ -1,0 +1,28 @@
+# Binaries and compiled objects
+*.exe
+*.o
+*.obj
+*.d
+*.res
+*.a
+*.lib
+*.dll
+
+# Build and distribution directories
+build/
+dist/
+bin/
+
+# Temporary test binaries
+tests/test_*
+!tests/test_*.c
+
+# macOS artifacts
+.DS_Store
+._*
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo

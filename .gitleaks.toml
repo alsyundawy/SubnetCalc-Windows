@@ -1,0 +1,15 @@
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allowlist harmless CSV formula injection test vectors and dummy documentation"
+regexes = [
+    '''^'=cmd\|''',
+    '''=1\+1''',
+    '''@SUM\('''
+]
+paths = [
+    '''tests/.*''',
+    '''docs/.*''',
+    '''README\.md'''
+]

@@ -1,0 +1,57 @@
+name: ci
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Engine tests
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential
+          bash tools/build.sh test
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: cppcheck and format
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cppcheck clang-format
+          cppcheck --error-exitcode=2 --enable=warning,style,performance,portability \
+            --inline-suppr --suppress=missingIncludeSystem -I src src
+          find src tests -name '*.c' -o -name '*.h' | xargs clang-format --dry-run -Werror
+
+  build:
+    needs: [test, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cross compile
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-mingw-w64 binutils-mingw-w64 zip nsis
+          bash tools/build.sh release
+          bash tools/check-imports.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: subnetcalc-windows-build
+          retention-days: 14
+          path: |
+            dist/SubnetCalc-Windows-x86.zip
+            dist/SubnetCalc-Windows-x64.zip
+            dist/SubnetCalc-Windows-x86-setup.exe
+            dist/SubnetCalc-Windows-x64-setup.exe
+            dist/SHA256SUMS
+            dist/imports.txt
+            dist/WIN7.txt
