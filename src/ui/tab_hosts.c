@@ -130,8 +130,6 @@ void tab_hosts_export_ascii(HWND hwnd) {
     if (GetSaveFileNameW(&ofn)) {
         FILE *fp = _wfopen(szFile, L"w, ccs=UTF-8");
         if (fp) {
-            const char *headers[] = {"Index",        "Network", "Broadcast",
-                                     "Usable Range", "Netmask", "Hosts"};
             int count = (int)SendMessageW(s_hList, LVM_GETITEMCOUNT, 0, 0);
 
             if (count <= 0) {
@@ -171,6 +169,8 @@ void tab_hosts_export_ascii(HWND hwnd) {
             }
 
             if (!alloc_failed) {
+                static const char *const headers[] = {"Index",        "Network", "Broadcast",
+                                                      "Usable Range", "Netmask", "Hosts"};
                 export_write_ascii_table(fp, headers, 6, (const char *const *const *)rows,
                                          (size_t)count);
             }

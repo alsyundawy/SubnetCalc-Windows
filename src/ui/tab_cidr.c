@@ -20,7 +20,7 @@ static void do_aggregation(void) {
     cidr_block_t blocks[64];
     size_t count = 0;
 
-    char *line = strtok(ctext, "\r\n; ,");
+    const char *line = strtok(ctext, "\r\n; ,");
     while (line && count < 64) {
         char *slash = strchr(line, '/');
         if (slash) {
