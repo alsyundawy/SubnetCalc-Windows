@@ -7,12 +7,12 @@ Rule: do not mark a task done without a command and an exit code.
 
 ## Phase 0 — Repository skeleton
 
-- [ ] T0.1 Create `alsyundawy/SubnetCalc-Windows` with GPL-2.0 `LICENSE`, README, CHANGELOG, and this plan copied into `docs/`.
-- [ ] T0.2 Add `.gitignore` for `*.exe`, `*.o`, `*.d`, `build/`.
-- [ ] T0.3 Add `tools/build.sh` that builds `src/engine` tests with host gcc, both MinGW targets, portable ZIPs, and both NSIS setup EXEs when `makensis` exists.
-- [ ] T0.4 Add the four workflows in `SubnetCalc-Windows-CI.md`: `ci.yml` (test, lint, MinGW x86/x64, import check, portable ZIP, NSIS setup, artifact upload), `lint.yml`, `codeql.yml`, `release.yml` (tag `v*` only, GitHub Release assets).
-- [ ] T0.5 README states Windows 7 SP1 x86/x64, no redistributable, credits, the macOS behavior baseline, and the Actions artifact / Release locations.
-- [ ] T0.6 Add `SECURITY.md` with the report path and the forbidden-import list. Add `.gitleaks.toml` allowlist only for known test vectors, not for real secrets.
+- [x] T0.1 Create `alsyundawy/SubnetCalc-Windows` with GPL-2.0 `LICENSE`, README, CHANGELOG, and this plan copied into `docs/`.
+- [x] T0.2 Add `.gitignore` for `*.exe`, `*.o`, `*.d`, `build/`.
+- [x] T0.3 Add `tools/build.sh` that builds `src/engine` tests with host gcc, both MinGW targets, portable ZIPs, and both NSIS setup EXEs when `makensis` exists.
+- [x] T0.4 Add the four workflows in `SubnetCalc-Windows-CI.md`: `ci.yml` (test, lint, MinGW x86/x64, import check, portable ZIP, NSIS setup, artifact upload), `lint.yml`, `codeql.yml`, `release.yml` (tag `v*` only, GitHub Release assets).
+- [x] T0.5 README states Windows 7 SP1 x86/x64, no redistributable, credits, the macOS behavior baseline, and the Actions artifact / Release locations.
+- [x] T0.6 Add `SECURITY.md` with the report path and the forbidden-import list. Add `.gitleaks.toml` allowlist only for known test vectors, not for real secrets.
 
 Done when: empty `wWinMain` EXE builds for both arches, both portable ZIPs and both NSIS setup EXEs exist, the import check passes, and a push to `master` publishes the Actions artifact. Do not mark T0.4 done if the artifact step or the setup EXE is missing.
 
